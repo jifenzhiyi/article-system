@@ -30,8 +30,8 @@ export default {
   name: 'BaseHeader',
   data() {
     return {
-      name: '用户',
-      department: '部门',
+      name: this.$storage.get('article-system_username'),
+      department: this.$storage.get('article-system_department'),
     };
   },
   methods: {
@@ -50,30 +50,30 @@ export default {
 
 <style lang="less" scoped>
 header {
-  height: 48px;
+  height: 96px;
   display: flex;
-  padding: 0 20px;
+  padding: 0 40px;
   align-items: center;
-  border-bottom: 1px solid #e8e8e8;
-  .logo { height: 44px; }
+  border-bottom: 2px solid #e8e8e8;
+  .logo { height: 80px; }
   .title {
-    font-size: 18px;
+    font-size: 36px;
     font-weight: 600;
-    padding-left: 40px;
+    padding-left: 80px;
     position: relative;
     flex: 1;
     &::before {
       content: ' ';
       width: 2px;
-      height: 19px;
+      height: 38px;
       background: #666;
       position: absolute;
-      left: 22px; top: 4px;
+      left: 44px; top: 8px;
     }
   }
   .info {
-    .svg-icon { font-size: 18px; color: #666; }
-    span { padding-left: 5px; font-size: 16px; color: #666; }
+    .svg-icon { font-size: 36px; color: #666; }
+    span { padding-left: 10px; font-size: 32px; color: #666; }
   }
 }
 </style>

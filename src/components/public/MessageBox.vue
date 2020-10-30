@@ -48,30 +48,30 @@ export default {
 
 <style lang="less" scoped>
 .messageBox {
-  width: 312px;
+  width: 624px;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: #fff;
   border-radius: 8px;
   border: solid 1px #e8edfa;
-  box-shadow: 0 0 5px 0 rgba(231, 237, 249, 0.75);
+  box-shadow: 0 0 10px 0 rgba(231, 237, 249, 0.75);
   .ico {
-    width: 108px;
-    height: 108px;
-    margin-top: 35px;
+    width: 216px;
+    height: 216px;
+    margin-top: 70px;
   }
   .info {
     width: 90%;
     color: #666;
-    font-size: 16px;
-    margin: 27px 5% 0;
+    font-size: 32px;
+    margin: 30px 5% 0;
     text-align: center;
   }
   .btn {
     width: 50%;
     display: flex;
-    margin: 25px auto;
+    margin: 50px auto;
     align-items: center;
     justify-content: center;
     &.confirm {

@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import axios from 'axios';
 import { END_POINT } from '@/config';
 import { Modal } from 'ant-design-vue';
@@ -39,6 +40,7 @@ class Request {
       };
     }
     this.client = axios.create(this.config);
+    Vue.prototype.$http = this.client;
     const requestInterceptors = options.requestInterceptors || defaultRequestInterceptors;
     const responseInterceptors = options.responseInterceptors || defaultResponseInterceptors;
     this.startLoading = defaultStartLoading;
@@ -52,9 +54,11 @@ class Request {
     let newConfig = { ...this.config };
     newConfig = Object.assign(newConfig, options);
     newConfig.url = url;
-    newConfig.method === 'GET'
-      ? (newConfig.params.accessToken = storage.get('scada_user_token'))
-      : (newConfig.data.accessToken = storage.get('scada_user_token'));
+    const token = storage.get(`${window.configName}_usertoken`);
+    if (token) {
+      newConfig.method === 'GET' ? (newConfig.params.token = token) : (newConfig.data.token = token);
+      newConfig.headers.Authorization = `Bearer ${token}`;
+    }
     newConfig.method === 'GET' ? (newConfig.data = null) : (newConfig.params = null);
     params && params.isLoading && this.startLoading();
     return this.client.request(newConfig).then((res) => {
