@@ -16,8 +16,7 @@
             placeholder="请输入账号">
             <a-icon
               slot="prefix"
-              type="user"
-              style="color: rgba(0,0,0,.25)" />
+              type="user" />
           </a-input>
         </a-form-item>
         <a-form-item>
@@ -27,8 +26,7 @@
             placeholder="请输入密码">
             <a-icon
               slot="prefix"
-              type="lock"
-              style="color: rgba(0,0,0,.25)" />
+              type="lock" />
           </a-input>
         </a-form-item>
         <a-form-item>
@@ -39,14 +37,11 @@
         </a-form-item>
       </a-form>
     </div>
-    <a
-      class="abs register"
-      @click="register" />
   </div>
 </template>
 
 <script>
-import md5 from 'md5';
+// import md5 from 'md5';
 import storage from '@/utils/storage';
 import api from './api';
 
@@ -68,29 +63,17 @@ export default {
     async login(values) {
       this.params = values;
       const obj = {
-        account: values.account,
-        password: md5(values.password),
+        username: values.account,
+        password: values.password, // md5(values.password)
       };
-      const res = await api.login('/api/article/login', obj);
+      const res = await api.login('/api/users/login', obj);
       if (res) {
         storage.set(`${window.configName}_username`, res.data.name);
-        storage.set(`${window.configName}_department`, res.data.department);
-        storage.set(`${window.configName}_usertoken`, res.data.token);
+        storage.set(`${window.configName}_usertoken`, res.data.accessToken);
         this.$notice_success({
           minfo: '登录成功',
           func: () => this.$router.push('/home'),
         });
-      }
-    },
-    async register() {
-      console.log('register params', this.params);
-      if (this.params) {
-        const obj = {
-          account: this.params.account,
-          password: md5(this.params.password),
-        };
-        const res = await api.login('/api/article/register', obj);
-        console.log('res', res);
       }
     },
   },

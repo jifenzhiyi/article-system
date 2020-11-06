@@ -8,22 +8,21 @@
       slot-scope="item">
       <img
         class="imgcss"
-        :src="item.imageUrl" />
-      <a-list-item-meta :description="item.desc">
+        :src="item.mainImage" />
+      <a-list-item-meta :description="item.briefIntro">
         <a
           slot="title"
           href="javascript:void(0)">{{ item.title }}</a>
       </a-list-item-meta>
-      <div class="time">更新于 {{ item.updatedAt.split('T')[0] }}</div>
-      <a
-        slot="actions"
-        @click="del(item.id)">删除</a>
-      <a
-        slot="actions"
-        @click="edit(item.id)">编辑</a>
-      <a
-        slot="actions"
-        @click="release(item.id)">发布</a>
+      <div class="status">{{ item.status === 1 ? '已发布' : '未发布' }}</div>
+      <div class="time">更新于 {{ item.updateTime }}</div>
+      <div class="btn">
+        <a @click="del(item.articleId)">删除</a>
+        <a @click="edit(item.articleId)">编辑</a>
+        <a
+          v-if="item.status === 0"
+          @click="release(item.articleId)">发布</a>
+      </div>
     </a-list-item>
   </a-list>
 </div>
@@ -54,6 +53,12 @@ export default {
     }
     .time {
       padding-left: 50px;
+    }
+    .btn {
+      display: flex;
+      width: 320px;
+      padding-left: 60px;
+      justify-content: space-around;
     }
   }
 }

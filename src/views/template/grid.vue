@@ -9,22 +9,23 @@
         slot-scope="item">
         <div
           class="imgcss"
-          :style="`background: url(${item.imageUrl}) center no-repeat;`">
+          :style="`background: url(${item.mainImage}) center no-repeat;`">
           <!-- <img :src="item.imageUrl" /> -->
         </div>
-        <h4 class="ellipsis">{{ item.title }}</h4>
-        <p class="ellipsis">{{ item.desc || '无' }}</p>
-        <p>更新于 {{ item.updatedAt.split('T')[0] }}</p>
+        <h4 class="ellipsis">{{ item.title }}<span>{{ item.status === 1 ? '已发布' : '未发布' }}</span></h4>
+        <p class="ellipsis">{{ item.briefIntro || '无' }}</p>
+        <p>更新于 {{ item.updateTime.split(' ')[0] }}</p>
         <div class="abs popup">
           <a-icon
             type="delete"
-            @click="del(item.id)" />
+            @click="del(item.articleId)" />
           <a-icon
             type="form"
-            @click="edit(item.id)" />
+            @click="edit(item.articleId)" />
           <a-icon
             type="upload"
-            @click="release(item.id)" />
+            v-show="item.status === 0"
+            @click="release(item.articleId)" />
         </div>
       </a-list-item>
     </a-list>
@@ -55,6 +56,11 @@ export default {
       background-size: 50% !important;
     }
     h4 { padding: 0 20px; font-size: 32px; }
+    h4 span {
+      float: right;
+      color: #666;
+      font-size: 16px;
+    }
     p { padding: 0 20px; margin-bottom: 10px; font-size: 28px;}
     .popup {
       display: none;

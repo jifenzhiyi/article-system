@@ -6,9 +6,16 @@
       @click="goback">返回上一页</a-button>
     <div class="abs form">
       <div class="title">
+        <span>文章标题：</span>
         <a-input
           placeholder="设置文章标题"
           v-model="params.title" />
+      </div>
+      <div class="title">
+        <span>文章作者：</span>
+        <a-input
+          placeholder="设置文章作者"
+          v-model="params.author" />
       </div>
       <div class="tinymce">
         <editor
@@ -27,12 +34,12 @@
             :multiple="true"
             :show-upload-list="false"
             :before-upload="beforeUpload"
-            @change="handleChange">
+            @change="handleChange('test')">
             <img
               alt="fileImg"
               class="fileCss"
-              v-if="params.imageUrl"
-              :src="params.imageUrl" />
+              v-if="params.mainImage"
+              :src="params.mainImage" />
             <div v-else>
               <a-icon :type="loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -41,12 +48,13 @@
             </div>
           </a-upload>
           <a-textarea
-            v-model="params.desc"
+            v-model="params.briefIntro"
             placeholder="导语，选填"
             :auto-size="{ minRows: 4, maxRows: 4 }"/>
         </div>
       </div>
       <div class="btn">
+        <span v-if="params.status === 1">「 文章已发布 」</span>
         <a-button
           type="primary"
           @click="save">保存</a-button>
@@ -55,7 +63,9 @@
           type="primary">预览</a-button>
         <a-button
           ghost
-          type="primary">发布</a-button>
+          type="primary"
+          v-if="params.status !== 1 && params.articleId"
+          @click="release(params.articleId)">发布</a-button>
       </div>
     </div>
   </div>
@@ -64,21 +74,24 @@
 <script>
 import editor from '@tinymce/tinymce-vue';
 import upload from '@/mixins/upload';
+import edit from '@/mixins/edit';
 import api from '@/views/api';
 
 export default {
   name: 'Edit',
-  mixins: [upload],
+  mixins: [upload, edit],
   components: { editor },
   data() {
     return {
       loading: false,
       params: {
-        id: null, // 文章id
+        articleId: null, // 文章id
         title: '', // 文章标题
-        imageUrl: '', // 封面
-        desc: '', // 导语
+        author: '', // 文章作者
+        mainImage: '', // 封面
+        briefIntro: '', // 导语
         content: '', // 内容
+        status: null, // 文章状态
       },
       init: {
         language: 'zh_CN',
@@ -100,13 +113,13 @@ export default {
   created() {
     const id = this.$route.params.id;
     if (id) {
-      this.params.id = this.$route.params.id;
+      this.params.articleId = this.$route.params.id;
       this.getInfo();
     }
   },
   methods: {
     async getInfo() {
-      const res = await api.info(this.params.id);
+      const res = await api.info({ articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
     },
     goback() {
@@ -121,15 +134,21 @@ export default {
         this.$message.error('请输入内容');
         return;
       }
-      if (!this.params.imageUrl) {
+      if (!this.params.mainImage) {
         this.$message.error('请上传封面');
         return;
       }
-      const res = await api.createArticle(this.params);
-      if (res) {
-        this.params.id = res.data.id;
-        this.$message.success(res.data.msg);
+      let res = null;
+      if (this.params.articleId) {
+        // 编辑文章
+        res = await api.updateArticle(this.params);
+        console.log('res', res);
+      } else {
+        // 新增文章
+        res = await api.createArticle(this.params);
+        res && (this.params.articleId = res.data.articleId);
       }
+      res && this.$message.success(res.msg);
     },
   },
 };
@@ -152,11 +171,23 @@ export default {
     box-shadow: 2px 6px 20px 0 rgba(0, 0, 0, 0.1);
     top: 20px; left: 20%; right: 20%; bottom: 40px;
     .title {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      span {
+        width: 300px;
+        color: #000;
+        font-size: 36px;
+        font-weight: bold;
+        text-align: right;
+      }
       .ant-input {
         border: 0;
         padding: 50px;
+        margin-right: 50px;
         font-size: 36px;
-        &:focus { border: none; box-shadow: none; }
+        border-bottom: dashed 1px #ccc;
+        &:focus { box-shadow: none; }
       }
     }
     .tinymce {
@@ -169,7 +200,7 @@ export default {
       margin: 0 50px;
       padding-top : 50px;
       flex-direction: column;
-      border-top: solid 1px #ddd;
+      border-top: dashed 1px #ddd;
       h3 { margin-bottom: 30px; color: #666; }
       .temp {
         display: flex;
@@ -178,7 +209,7 @@ export default {
           // width: 224px;
           width: auto;
           margin-right: 30px;
-          .fileCss { width: 100%; }
+          .fileCss { max-height: 150px; max-width: 367px;  }
         }
         .ant-input{ flex: 1; resize: none; }
       }
@@ -186,7 +217,13 @@ export default {
     .btn {
       display: flex;
       padding: 50px;
+      position: relative;
       justify-content: flex-end;
+      span {
+        color: #f90;
+        position: absolute;
+        bottom: 50px; left: 40px;
+      }
       .ant-btn { margin-left: 40px; padding: 0 30Px; }
     }
   }

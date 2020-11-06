@@ -43,7 +43,7 @@ const router = new VueRouter({ mode: 'history', routes });
 // 导航守卫
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.meta && (to.meta.requiresAuth || false);
-  const userToken = storage.get(`${window.configName}_username`);
+  const userToken = storage.get(`${window.configName}_usertoken`);
   const needLogin = requiresAuth && !userToken;
   if (needLogin) {
     next({ path: '/login' });

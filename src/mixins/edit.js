@@ -1,3 +1,5 @@
+import api from '@/views/api';
+
 export default {
   methods: {
     del(id) {
@@ -6,8 +8,9 @@ export default {
     edit(id) {
       this.$emit('on-edit', id);
     },
-    release(id) {
-      this.$emit('on-release', id);
+    async release(articleId) {
+      const res = await api.publishArticle({ articleId });
+      res && this.$message.success(res.msg);
     },
   },
 };

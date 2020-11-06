@@ -11,7 +11,6 @@
         @click="e => e.preventDefault()">
         <svg-icon iconClass="user" />
         <span>{{ name }}</span>
-        <span>({{ department }})</span>
       </a>
       <a-menu slot="overlay">
         <a-menu-item>
@@ -31,7 +30,6 @@ export default {
   data() {
     return {
       name: this.$storage.get('article-system_username'),
-      department: this.$storage.get('article-system_department'),
     };
   },
   methods: {

@@ -1,6 +1,5 @@
 const path = require('path');
 const htmlConfig = require('./package.json');
-const menuData = require('./mock/menuList.json');
 const px2rem = require('postcss-px2rem-exclude');
 
 const postcss = px2rem({
@@ -17,21 +16,15 @@ module.exports = {
     open: true,
     port: 8887,
     host: '0.0.0.0',
-    // before(app) {
-    //   // mock 模拟真实数据
-    //   app.post('/api/users/login', (req, res) => {
-    //     res.json(menuData);
-    //   });
+    // proxy: {
+    //   '/api/': {
+    //     target: 'http://localhost:7001',
+    //     secure: false,
+    //     pathRewrite: {
+    //       '^/api': '',
+    //     },
+    //   },
     // },
-    proxy: {
-      '/api/': {
-        target: 'http://localhost:7001',
-        secure: false,
-        pathRewrite: {
-          '^/api': '',
-        },
-      },
-    },
   },
   css: {
     extract: false,

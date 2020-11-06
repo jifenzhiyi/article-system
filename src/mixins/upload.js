@@ -6,6 +6,7 @@ const CHUNK_SIZE = parseInt(0.1 * 1024 * 1024, 10);
 export default {
   data() {
     return {
+      token: this.$storage.get(`${window.configName}_usertoken`),
       file: null,
       chunks: [],
       hash: null,
@@ -23,15 +24,30 @@ export default {
       if (!file) return;
       this.file = file;
       this.chunks = [];
-      await this.handleChange();
-      console.log('result', this.params.imageUrl);
-      if (this.params.imageUrl) {
-        success(this.params.imageUrl);
+      const img = await this.handleChange('content');
+      if (img) {
+        success(img);
       } else {
         failure('error');
       }
     },
-    async handleChange() {
+    // 普通上传
+    async handleChange(type) {
+      if (!this.file) return;
+      const form = new FormData();
+      form.append('accessToken', this.token);
+      form.append('project', type);
+      form.append('file', this.file);
+      const ret = await this.$http.post('/api/images/upload', form);
+      if (type !== 'content') {
+        this.params.mainImage = ret.data.data.imageUrl;
+      }
+      let imageUrl = null;
+      if (ret) imageUrl = ret.data.data.imageUrl;
+      return imageUrl;
+    },
+    // 分片，断点续传，秒传
+    async handleChange2() {
       if (!this.file) return;
       const isImage = await this.isImage(this.file);
       if (!isImage) {
@@ -46,7 +62,7 @@ export default {
       });
       const { uploaded, uploadedList, url } = res.data;
       if (uploaded) {
-        this.params.imageUrl = url;
+        this.params.mainImage = url;
         return this.$message.success('秒传成功！');
       }
       this.chunks = chunks.map((chunk, index) => {
@@ -80,7 +96,7 @@ export default {
         size: CHUNK_SIZE,
         hash: this.hash,
       });
-      this.params.imageUrl = ret.data.data.url;
+      this.params.mainImage = ret.data.data.url;
     },
     async sendRequest(chunks, limit = 4) {
       return new Promise((resolve, reject) => {
@@ -174,7 +190,6 @@ export default {
       return new Promise((resolve) => {
         const spark = new sparkMD5.ArrayBuffer();
         const reader = new FileReader();
-
         const file = this.file;
         const size = file.size;
         const offset = 2 * 1024 * 1024;

@@ -11,14 +11,12 @@
         v-show="type === 'list'"
         :list="list"
         @on-del="del"
-        @on-edit="edit"
-        @on-release="release" />
+        @on-edit="edit" />
       <home-grid
         v-show="type === 'imgs'"
         :list="list"
         @on-del="del"
-        @on-edit="edit"
-        @on-release="release" />
+        @on-edit="edit" />
       <home-pagination
         :total="total"
         :current="page"
@@ -61,25 +59,30 @@ export default {
     this.getList();
   },
   methods: {
-    del(id) {
-      const index = this.list.findIndex((o) => o.id === id);
-      this.list.splice(index, 1);
+    del(articleId) {
+      this.$notice_confirm({
+        minfo: '确认删除该文章?',
+        func: async () => {
+          const res = await api.deleteArticle({ articleId });
+          if (res) {
+            const index = this.list.findIndex((o) => o.articleId === articleId);
+            this.list.splice(index, 1);
+          }
+        },
+      });
     },
     edit(id) {
       this.$router.push(`/edit/${id}`);
     },
-    release(id) {
-      console.log('release id', id);
-    },
     async getList() {
-      const res = await api.list('api/article/list', { page: this.page, size: this.size, title: this.title });
+      const res = await api.list('api/articles/queryList', {
+        page: this.page,
+        size: this.size,
+        title: this.title,
+        statusList: [0, 1],
+      });
       if (res) {
-        this.list = res.data.list.map((one) => {
-          one.width = 0;
-          one.height = 0;
-          one.id = one._id;
-          return one;
-        });
+        this.list = res.data.rows;
         this.total = res.data.total;
       }
     },

@@ -56,8 +56,8 @@ class Request {
     newConfig.url = url;
     const token = storage.get(`${window.configName}_usertoken`);
     if (token) {
-      newConfig.method === 'GET' ? (newConfig.params.token = token) : (newConfig.data.token = token);
-      newConfig.headers.Authorization = `Bearer ${token}`;
+      newConfig.method === 'GET' ? (newConfig.params.accessToken = token) : (newConfig.data.accessToken = token);
+      // newConfig.headers.Authorization = `Bearer ${token}`;
     }
     newConfig.method === 'GET' ? (newConfig.data = null) : (newConfig.params = null);
     params && params.isLoading && this.startLoading();
@@ -72,7 +72,7 @@ class Request {
           title: '错误信息',
           content: res.data.msg,
           onOk() {
-            ['0002', '0006', '0007', '0017'].includes(res.data.code) && (window.location.href = '/login');
+            ['2001', '2006', '2007', '2008'].includes(res.data.code) && (window.location.href = '/login');
           },
         });
         return null;
@@ -122,21 +122,19 @@ const request = new Request({
 export default request;
 
 // 9999 系统异常
-// 0001 请求参数错误
-// 0002 您还没有登录！请登录。
-// 0003 账号不存在
-// 0004 密码输入错误，请重新输出
-// 0005 原密码输入错误，请重新输出
-// 0006 您的账号在异地登录，请重新登录
-// 0007 您的账号异常，请重新登录
-// 0008 该角色已分配给其他用户，请先解除关联关系
-// 0009 账号已存在
-// 0010 仓库编号已存在
-// 0011 角色名称已存在
-// 0012 授权失败
-// 0013 请选择小于七天的数据！
-// 0014 请选择小于三十一天的数据！
-// 0015 请选择小于三天的数据！
-// 0016 产品已存在！
-// 0017 登录过期，请重新登录！
+// 1001 请求参数错误
+// 2001 您还没有登录！请登录。
+// 2003 账号不存在
+// 2004 密码输入错误，请重新输出
+// 2005 原密码输入错误，请重新输出
+// 2006 您的账号在异地登录，请重新登录
+// 2007 您的账号异常，请重新登录
+// 2008 登录过期，请重新登录！
+// 2009 授权失败
+// 3001 图片或图片名不能为空
+// 3002 保存图片到磁盘失败
+// 3003 文件格式不合法
+// 3004 图片的项目名不能为空
+// 3005 图片信息不可用
+// 3101 文章数据未找到
 // 0018 表数据内容错误
