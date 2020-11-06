@@ -9,7 +9,7 @@
         class="login-form"
         :form="form"
         @submit="handleSubmit">
-        <h4>马路创新科技 ｜ 文章发布系统</h4>
+        <h4>马路创新 ｜ 文章发布系统</h4>
         <a-form-item>
           <a-input
             v-decorator="[ 'account', { rules: [{ required: true, message: '账号不能为空' }] } ]"

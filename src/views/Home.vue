@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       page: 1, // 当前页
-      size: 10, // 显示条数
+      size: 50, // 显示条数
       columns: [], // 列元素
       list: [], // 列表数据
       total: 0, // 文章总数

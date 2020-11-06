@@ -34,6 +34,15 @@ export default {
     // 普通上传
     async handleChange(type) {
       if (!this.file) return;
+      const isImage = await this.isImage(this.file);
+      if (!isImage) {
+        this.$message.error('该文件非图片格式');
+        return;
+      }
+      if (this.file.size > 2 * 1024 * 1024) {
+        this.$message.error('上传图片大小不能超过2M');
+        return;
+      }
       const form = new FormData();
       form.append('accessToken', this.token);
       form.append('project', type);

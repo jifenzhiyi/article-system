@@ -19,6 +19,7 @@
       </div>
       <div class="tinymce">
         <editor
+          ref="tinymce"
           api-key="u5kxoafuxshmhtkcz1kpkxq5ng5mqkywa8sxaaa0uwf9xwfh"
           v-model="params.content"
           :init="init" />
@@ -60,12 +61,27 @@
           @click="save">保存</a-button>
         <a-button
           ghost
-          type="primary">预览</a-button>
+          type="primary"
+          @click="preview">预览</a-button>
         <a-button
           ghost
           type="primary"
           v-if="params.status !== 1 && params.articleId"
           @click="release(params.articleId)">发布</a-button>
+      </div>
+    </div>
+    <div
+      class="middle preview"
+      v-show="previewIsShow">
+      <h2>预览</h2>
+      <div
+        class="text"
+        v-html="params.content"></div>
+      <div class="btn">
+        <a-button
+          ghost
+          type="primary"
+          @click="previewIsShow = false">关闭</a-button>
       </div>
     </div>
   </div>
@@ -84,6 +100,7 @@ export default {
   data() {
     return {
       loading: false,
+      previewIsShow: false,
       params: {
         articleId: null, // 文章id
         title: '', // 文章标题
@@ -101,10 +118,10 @@ export default {
         //   'searchreplace visualblocks code fullscreen',
         //   'insertdatetime media table paste code help wordcount',
         // ],
-        plugins: ['image', 'help'],
-        toolbar: `undo redo | formatselect | bold italic backcolor |
+        plugins: ['image'],
+        toolbar: `undo redo | formatselect | bold italic |
           alignleft aligncenter alignright alignjustify |
-          numlist outdent indent | image help`,
+          numlist outdent indent | image`,
         images_upload_url: '/',
         images_upload_handler: this.images_upload_handler,
       },
@@ -124,6 +141,9 @@ export default {
     },
     goback() {
       window.history.back(-1);
+    },
+    preview() {
+      this.previewIsShow = true;
     },
     async save() {
       if (!this.params.title) {
@@ -159,6 +179,26 @@ export default {
   width: 100%;
   position: relative;
   background: #f8f8f8;
+  .preview {
+    z-index: 100;
+    padding: 50px;
+    display: flex;
+    position: absolute;
+    background: #fff;
+    border-radius: 10px;
+    flex-direction: column;
+    width: 70%; height: 80%;
+    border: solid 2px #000;
+    .text {
+      flex: 1;
+      padding: 20px 30px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      margin-bottom: 50px;
+      border: dashed 1px #ccc;
+    }
+    .btn { text-align: right; }
+  }
   .goback {
     position: absolute;
     bottom: 50px; right: 50px;
