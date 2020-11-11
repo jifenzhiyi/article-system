@@ -15,11 +15,13 @@ import {
   Card,
   Menu,
   Upload,
+  Checkbox,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
 Vue.use(Button);
 Vue.use(Card);
+Vue.use(Checkbox);
 Vue.use(ConfigProvider);
 Vue.use(Dropdown);
 Vue.use(Form);

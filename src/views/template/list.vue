@@ -1,31 +1,36 @@
 <template>
-<div class="abs wapper">
-  <a-list
-    item-layout="horizontal"
-    :data-source="list">
-    <a-list-item
-      slot="renderItem"
-      slot-scope="item">
-      <img
-        class="imgcss"
-        :src="item.mainImage" />
-      <a-list-item-meta :description="item.briefIntro">
-        <a
-          slot="title"
-          href="javascript:void(0)">{{ item.title }}</a>
-      </a-list-item-meta>
-      <div class="status">{{ item.status === 1 ? '已发布' : '未发布' }}</div>
-      <div class="time">更新于 {{ item.updateTime }}</div>
-      <div class="btn">
-        <a @click="del(item.articleId)">删除</a>
-        <a @click="edit(item.articleId)">编辑</a>
-        <a
-          v-if="item.status === 0"
-          @click="release(item.articleId)">发布</a>
-      </div>
-    </a-list-item>
-  </a-list>
-</div>
+  <div class="abs wapper">
+    <a-list
+      item-layout="horizontal"
+      :data-source="list">
+      <a-list-item
+        slot="renderItem"
+        slot-scope="item">
+        <img
+          class="imgcss"
+          :src="item.mainImage" />
+        <a-list-item-meta :description="item.briefIntro">
+          <a
+            slot="title"
+            class="title"
+            href="javascript:void(0)"
+            @click="preview(item.articleId)">{{ item.title }}</a>
+        </a-list-item-meta>
+        <div :class="['status', item.status === 1 && 'now']">
+          「 {{ item.status === 1 ? '已发布' : '未发布' }} 」
+        </div>
+        <div class="time">更新于 {{ item.updateTime }}</div>
+        <div class="btn">
+          <a @click="del(item.articleId)">删除</a>
+          <a @click="edit(item.articleId)">编辑</a>
+          <a
+            v-if="item.status === 0"
+            @click="release(item.articleId)">发布</a>
+        </div>
+      </a-list-item>
+    </a-list>
+    <preview-vue :content="content" />
+  </div>
 </template>
 
 <script>
@@ -51,14 +56,18 @@ export default {
       height: 96px;
       padding-right: 50px;
     }
-    .time {
-      padding-left: 50px;
+    .title:hover { color: #f00; }
+    .status {
+      font-size: 30px;
+      font-weight: bold;
+      &.now { color: #1DA57A; }
     }
+    .time { padding-left: 100px; width: 500px; }
     .btn {
-      display: flex;
       width: 320px;
-      padding-left: 60px;
-      justify-content: space-around;
+      display: flex;
+      padding-left: 50px;
+      a { padding-right: 30px; }
     }
   }
 }

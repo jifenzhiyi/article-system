@@ -1,9 +1,5 @@
 <template>
   <div class="content">
-    <a-button
-      type="primary"
-      class="goback"
-      @click="goback">返回上一页</a-button>
     <div class="abs form">
       <div class="title">
         <span>文章标题：</span>
@@ -48,10 +44,14 @@
               </div>
             </div>
           </a-upload>
-          <a-textarea
-            v-model="params.briefIntro"
-            placeholder="导语，选填"
-            :auto-size="{ minRows: 4, maxRows: 4 }"/>
+          <div class="textCss">
+            <a-textarea
+              v-model="params.briefIntro"
+              placeholder="导语，选填 (最大字数120)"
+              :maxLength="120"
+              :auto-size="{ minRows: 3, maxRows: 3 }"/>
+            <em>{{textareaNum}}/120</em>
+          </div>
         </div>
       </div>
       <div class="btn">
@@ -62,28 +62,18 @@
         <a-button
           ghost
           type="primary"
-          @click="preview">预览</a-button>
+          @click="preview()">预览</a-button>
         <a-button
           ghost
           type="primary"
           v-if="params.status !== 1 && params.articleId"
-          @click="release(params.articleId)">发布</a-button>
-      </div>
-    </div>
-    <div
-      class="middle preview"
-      v-show="previewIsShow">
-      <h2>预览</h2>
-      <div
-        class="text"
-        v-html="params.content"></div>
-      <div class="btn">
+          @click="releaseNow(params.articleId)">发布</a-button>
         <a-button
-          ghost
           type="primary"
-          @click="previewIsShow = false">关闭</a-button>
+          @click="goback">返回上一页</a-button>
       </div>
     </div>
+    <preview-vue :content="params.content" />
   </div>
 </template>
 
@@ -97,10 +87,14 @@ export default {
   name: 'Edit',
   mixins: [upload, edit],
   components: { editor },
+  computed: {
+    textareaNum() {
+      return this.params.briefIntro.length;
+    },
+  },
   data() {
     return {
       loading: false,
-      previewIsShow: false,
       params: {
         articleId: null, // 文章id
         title: '', // 文章标题
@@ -112,16 +106,16 @@ export default {
       },
       init: {
         language: 'zh_CN',
-        // menubar: false, // 顶部菜单栏显示
+        menubar: false, // 顶部菜单栏显示
         // plugins: [
         //   'advlist autolink lists link image charmap print preview anchor',
         //   'searchreplace visualblocks code fullscreen',
         //   'insertdatetime media table paste code help wordcount',
         // ],
-        plugins: ['image'],
+        plugins: ['image', 'table', 'code'],
         toolbar: `undo redo | formatselect | bold italic |
           alignleft aligncenter alignright alignjustify |
-          numlist outdent indent | image`,
+          numlist outdent indent | image table code`,
         images_upload_url: '/',
         images_upload_handler: this.images_upload_handler,
       },
@@ -142,8 +136,15 @@ export default {
     goback() {
       window.history.back(-1);
     },
-    preview() {
-      this.previewIsShow = true;
+    async releaseNow() {
+      this.$notice_confirm({
+        minfo: '确认发布该文章?',
+        func: async () => {
+          const res = await api.publishArticle({ articleId: this.params.articleId });
+          res && this.$message.success(res.msg);
+          res && this.getInfo();
+        },
+      });
     },
     async save() {
       if (!this.params.title) {
@@ -162,7 +163,6 @@ export default {
       if (this.params.articleId) {
         // 编辑文章
         res = await api.updateArticle(this.params);
-        console.log('res', res);
       } else {
         // 新增文章
         res = await api.createArticle(this.params);
@@ -179,32 +179,14 @@ export default {
   width: 100%;
   position: relative;
   background: #f8f8f8;
-  .preview {
-    z-index: 100;
-    padding: 50px;
-    display: flex;
-    position: absolute;
-    background: #fff;
-    border-radius: 10px;
-    flex-direction: column;
-    width: 70%; height: 80%;
-    border: solid 2px #000;
-    .text {
-      flex: 1;
-      padding: 20px 30px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      margin-bottom: 50px;
-      border: dashed 1px #ccc;
-    }
-    .btn { text-align: right; }
-  }
   .goback {
     position: absolute;
     bottom: 50px; right: 50px;
   }
   .form {
     display: flex;
+    overflow-y: auto;
+    overflow-x: hidden;
     background: #fff;
     border-radius: 10px;
     flex-direction: column;
@@ -231,33 +213,51 @@ export default {
       }
     }
     .tinymce {
-      flex: 1;
+      height: 1000px;
       display: flex;
       margin-bottom: 30px;
     }
     .other {
       display: flex;
       margin: 0 50px;
-      padding-top : 50px;
+      padding : 50px 0 130px;
       flex-direction: column;
       border-top: dashed 1px #ddd;
       h3 { margin-bottom: 30px; color: #666; }
       .temp {
         display: flex;
+        position: relative;
         justify-content: space-between;
         .avatar-uploader {
-          // width: 224px;
           width: auto;
-          margin-right: 30px;
+          margin-right: 20px;
           .fileCss { max-height: 150px; max-width: 367px;  }
         }
-        .ant-input{ flex: 1; resize: none; }
+        .textCss {
+          flex: 1;
+          position: relative;
+          border-radius: 5px;
+          border: solid 1px #ccc;
+          .ant-input {
+            border: 0;
+            resize: none;
+            outline: none;
+            box-shadow: none;
+          }
+          em {
+            color: #9a9a9a;
+            font-style: normal;
+            position: absolute;
+            bottom: 0; right: 10px;
+          }
+        }
       }
     }
     .btn {
       display: flex;
       padding: 50px;
-      position: relative;
+      position: fixed;
+      bottom: 10px; left: 20%; right: 20%;
       justify-content: flex-end;
       span {
         color: #f90;

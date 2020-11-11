@@ -4,19 +4,23 @@
     <div class="content">
       <home-top
         :type="type"
+        :list="list"
         :count="total"
         @on-change="onChange"
-        @on-search="onSearch" />
+        @on-search="onSearch"
+        @on-status="onStatus" />
       <home-list
         v-show="type === 'list'"
         :list="list"
         @on-del="del"
-        @on-edit="edit" />
+        @on-edit="edit"
+        @on-release="release" />
       <home-grid
         v-show="type === 'imgs'"
         :list="list"
         @on-del="del"
-        @on-edit="edit" />
+        @on-edit="edit"
+        @on-release="release" />
       <home-pagination
         :total="total"
         :current="page"
@@ -52,8 +56,14 @@ export default {
       list: [], // 列表数据
       total: 0, // 文章总数
       title: '', // 标题搜索
+      statusList: this.$storage.get(`${window.configName}_status`) || [0, 1],
       type: this.$storage.get(`${window.configName}_type`) || 'list', // imgs 图文模式，list 列表模式
     };
+  },
+  computed: {
+    listFilter() {
+      return this.list.filter((one) => one.status);
+    },
   },
   created() {
     this.getList();
@@ -74,12 +84,22 @@ export default {
     edit(id) {
       this.$router.push(`/edit/${id}`);
     },
+    async release(articleId) {
+      this.$notice_confirm({
+        minfo: '确认发布该文章?',
+        func: async () => {
+          const res = await api.publishArticle({ articleId });
+          res && this.$message.success(res.msg);
+          res && this.getList();
+        },
+      });
+    },
     async getList() {
       const res = await api.list('api/articles/queryList', {
         page: this.page,
         size: this.size,
         title: this.title,
-        statusList: [0, 1],
+        statusList: this.statusList,
       });
       if (res) {
         this.list = res.data.rows;
@@ -92,6 +112,10 @@ export default {
     },
     onSearch(val) {
       this.title = val;
+      this.getList();
+    },
+    onStatus(list) {
+      this.statusList = list;
       this.getList();
     },
     // 分页跳转

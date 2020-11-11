@@ -10,25 +10,46 @@
         <div
           class="imgcss"
           :style="`background: url(${item.mainImage}) center no-repeat;`">
-          <!-- <img :src="item.imageUrl" /> -->
         </div>
-        <h4 class="ellipsis">{{ item.title }}<span>{{ item.status === 1 ? '已发布' : '未发布' }}</span></h4>
+        <h4
+          class="ellipsis"
+          @click="preview(item.articleId)">{{ item.title }}
+          <span :class="item.status === 1 && 'now'">
+            「 {{ item.status === 1 ? '已发布' : '未发布' }} 」
+          </span>
+        </h4>
         <p class="ellipsis">{{ item.briefIntro || '无' }}</p>
         <p>更新于 {{ item.updateTime.split(' ')[0] }}</p>
         <div class="abs popup">
-          <a-icon
-            type="delete"
-            @click="del(item.articleId)" />
-          <a-icon
-            type="form"
-            @click="edit(item.articleId)" />
-          <a-icon
-            type="upload"
-            v-show="item.status === 0"
-            @click="release(item.articleId)" />
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>删除</span>
+            </template>
+            <a-icon
+              type="delete"
+              @click="del(item.articleId)" />
+          </a-tooltip>
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>编辑</span>
+            </template>
+            <a-icon
+              type="form"
+              @click="edit(item.articleId)" />
+          </a-tooltip>
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>发布</span>
+            </template>
+            <a-icon
+              type="upload"
+              v-show="item.status === 0"
+              @click="release(item.articleId)" />
+          </a-tooltip>
         </div>
       </a-list-item>
     </a-list>
+    <preview-vue :content="content" />
   </div>
 </template>
 
@@ -55,11 +76,13 @@ export default {
       border-bottom: solid 1px #ddd;
       background-size: 50% !important;
     }
-    h4 { padding: 0 20px; font-size: 32px; }
+    h4 { padding: 0 20px; font-size: 32px; cursor: pointer; }
+    h4:hover { color: #f00; }
     h4 span {
       float: right;
       color: #666;
       font-size: 16px;
+      &.now { color: #1DA57A; }
     }
     p { padding: 0 20px; margin-bottom: 10px; font-size: 28px;}
     .popup {
