@@ -68,10 +68,6 @@ li {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset;	/**通过边框阴影遮挡住背景*/
-  -webkit-text-fill-color: #333;
- }
 #app,
 body {
   height: 100%;
@@ -114,4 +110,13 @@ body {
     border: 0 !important;
     display: none !important;
   }
+}
+// textarea
+.tox-editor-container {
+  position: relative !important;
+}
+.tox-editor-header {
+  position: fixed !important;
+  top: 120px; left: 20%; right: 20%;
+  // transform: translate(-50%, 0);
 }

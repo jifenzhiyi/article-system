@@ -1,17 +1,25 @@
 <template>
   <div class="content">
-    <div class="abs form">
+    <div
+      ref="form"
+      class="abs form">
       <div class="title">
-        <span>文章标题：</span>
         <a-input
-          placeholder="设置文章标题"
+          placeholder="设置文章标题(最大字数64)"
+          :maxLength="64"
+          @focus="inputFocus('title')"
+          @blur="inputBlur('title')"
           v-model="params.title" />
+        <em v-show="focusArr.title">{{params.title.length}}/64</em>
       </div>
       <div class="title">
-        <span>文章作者：</span>
         <a-input
-          placeholder="设置文章作者"
+          placeholder="设置文章作者(最大字数8)"
+          :maxLength="8"
+          @focus="inputFocus('author')"
+          @blur="inputBlur('author')"
           v-model="params.author" />
+        <em v-show="focusArr.author">{{params.author.length}}/8</em>
       </div>
       <div class="tinymce">
         <editor
@@ -95,6 +103,10 @@ export default {
   data() {
     return {
       loading: false,
+      focusArr: {
+        title: false,
+        author: false,
+      },
       params: {
         articleId: null, // 文章id
         title: '', // 文章标题
@@ -129,6 +141,12 @@ export default {
     }
   },
   methods: {
+    inputFocus(type) {
+      this.focusArr[type] = true;
+    },
+    inputBlur(type) {
+      this.focusArr[type] = false;
+    },
     async getInfo() {
       const res = await api.info({ articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
@@ -191,25 +209,26 @@ export default {
     border-radius: 10px;
     flex-direction: column;
     box-shadow: 2px 6px 20px 0 rgba(0, 0, 0, 0.1);
-    top: 20px; left: 20%; right: 20%; bottom: 40px;
+    top: 110px; left: 20%; right: 20%; bottom: 40px;
     .title {
       height: 110px;
       display: flex;
+      margin: 0 50px;
+      position: relative;
       align-items: center;
-      span {
-        width: 300px;
-        color: #000;
-        font-size: 36px;
-        font-weight: bold;
-        text-align: right;
-      }
+      padding-right: 100px;
+      border-bottom: dashed 1px #ccc;
       .ant-input {
         border: 0;
         padding: 50px;
-        margin-right: 50px;
         font-size: 36px;
-        border-bottom: dashed 1px #ccc;
         &:focus { box-shadow: none; }
+      }
+      em {
+        right: 10px;
+        color: #9a9a9a;
+        font-style: normal;
+        position: absolute;
       }
     }
     .tinymce {

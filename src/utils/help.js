@@ -4,6 +4,18 @@ export const debounce = (fn, wait) => {
   timeout = setTimeout(fn, wait);
 };
 
+export const throttle = (callback, time) => {
+  let timer = null;
+  return function () {
+    if (!timer) {
+      timer = setTimeout(() => {
+        callback();
+        timer = null;
+      }, time);
+    }
+  }
+}
+
 export const getNewDate = (time) => time.replace('T', ' ');
 
 export const convertArrayToMap = (array, key) => {
