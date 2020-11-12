@@ -127,7 +127,7 @@ export default {
         plugins: ['image', 'table', 'code'],
         toolbar: `undo redo | formatselect | bold italic |
           alignleft aligncenter alignright alignjustify |
-          numlist outdent indent | image table code`,
+          numlist outdent indent | image table code forecolor`,
         images_upload_url: '/',
         images_upload_handler: this.images_upload_handler,
       },

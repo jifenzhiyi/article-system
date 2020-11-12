@@ -53,16 +53,30 @@ export default {
   top: 150px; left: 50px; right: 50px; bottom: 150px;
   .ant-list-item {
     .imgcss {
-      height: 96px;
+      width: 300px;
       padding-right: 50px;
     }
+    .title { font-size: 32px; }
     .title:hover { color: #f00; }
+    .ant-list-item-meta-content {
+      flex: 1;
+      overflow: hidden;
+      .ant-list-item-meta-description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+      }
+    }
     .status {
+      width: 200px;
       font-size: 30px;
       font-weight: bold;
+      text-align: center;
       &.now { color: #1DA57A; }
     }
-    .time { padding-left: 100px; width: 500px; }
+    .time { padding-left: 50px; width: 420px; }
     .btn {
       width: 320px;
       display: flex;

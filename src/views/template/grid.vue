@@ -74,14 +74,21 @@ export default {
       overflow: hidden;
       margin-bottom: 10px;
       border-bottom: solid 1px #ddd;
-      background-size: 50% !important;
+      background-size: 100% !important;
     }
-    h4 { padding: 0 20px; font-size: 32px; cursor: pointer; }
+    h4 {
+      padding: 0 130px 0 20px;
+      font-size: 32px;
+      cursor: pointer;
+      position: relative;
+    }
     h4:hover { color: #f00; }
     h4 span {
-      float: right;
+      right: 0;
+      top: 6px;
       color: #666;
       font-size: 16px;
+      position: absolute;
       &.now { color: #1DA57A; }
     }
     p { padding: 0 20px; margin-bottom: 10px; font-size: 28px;}
