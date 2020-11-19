@@ -9,7 +9,7 @@ export default {
   methods: {
     async preview(articleId) {
       if (articleId) {
-        const res = await api.info({ articleId });
+        const res = await api.operation('queryArticle', { articleId });
         res && (this.content = res.data.content);
       }
       this.$store.commit('SET_PREVIEW', true);
