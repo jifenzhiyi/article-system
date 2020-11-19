@@ -62,26 +62,26 @@
           </div>
         </div>
       </div>
-      <div class="btn">
-        <span v-if="params.status === 1">「 文章已发布 」</span>
-        <a-button
-          type="primary"
-          @click="save">保存</a-button>
-        <a-button
-          ghost
-          type="primary"
-          @click="preview()">预览</a-button>
-        <a-button
-          ghost
-          type="primary"
-          v-if="params.status !== 1 && params.articleId"
-          @click="releaseNow(params.articleId)">发布</a-button>
-        <a-button
-          type="primary"
-          @click="goback">返回上一页</a-button>
-      </div>
     </div>
     <preview-vue :content="params.content" />
+    <div class="edit_btn">
+      <span v-if="params.status === 1">「 文章已发布 」</span>
+      <a-button
+        type="primary"
+        @click="save">保存</a-button>
+      <a-button
+        ghost
+        type="primary"
+        @click="preview()">预览</a-button>
+      <a-button
+        ghost
+        type="primary"
+        v-if="params.status !== 1 && params.articleId"
+        @click="releaseNow(params.articleId)">发布</a-button>
+      <a-button
+        type="primary"
+        @click="goback">返回上一页</a-button>
+    </div>
   </div>
 </template>
 
@@ -148,7 +148,7 @@ export default {
       this.focusArr[type] = false;
     },
     async getInfo() {
-      const res = await api.info({ articleId: this.params.articleId });
+      const res = await api.operation('queryArticle', { articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
     },
     goback() {
@@ -158,7 +158,7 @@ export default {
       this.$notice_confirm({
         minfo: '确认发布该文章?',
         func: async () => {
-          const res = await api.publishArticle({ articleId: this.params.articleId });
+          const res = await api.operation('publish', { articleId: this.params.articleId });
           res && this.$message.success(res.msg);
           res && this.getInfo();
         },
@@ -194,13 +194,9 @@ export default {
 
 <style lang="less" scoped>
 .content {
-  width: 100%;
+  flex: 1;
   position: relative;
   background: #f8f8f8;
-  .goback {
-    position: absolute;
-    bottom: 50px; right: 50px;
-  }
   .form {
     display: flex;
     overflow-y: auto;
@@ -209,7 +205,7 @@ export default {
     border-radius: 10px;
     flex-direction: column;
     box-shadow: 2px 6px 20px 0 rgba(0, 0, 0, 0.1);
-    top: 110px; left: 20%; right: 20%; bottom: 40px;
+    top: 100px; left: 15%; right: 15%; bottom: 150px;
     .title {
       height: 110px;
       display: flex;
@@ -272,19 +268,22 @@ export default {
         }
       }
     }
-    .btn {
-      display: flex;
-      padding: 50px;
-      position: fixed;
-      bottom: 10px; left: 20%; right: 20%;
-      justify-content: flex-end;
-      span {
-        color: #f90;
-        position: absolute;
-        bottom: 50px; left: 40px;
-      }
-      .ant-btn { margin-left: 40px; padding: 0 30Px; }
+  }
+  .edit_btn {
+    display: flex;
+    position: fixed;
+    padding: 30px 50px;
+    background: #fff;
+    align-items: center;
+    justify-content: flex-end;
+    border-top: solid 1px #ddd;
+    bottom: 0; left: 0; right: 0;
+    span {
+      color: #f90;
+      position: absolute;
+      bottom: 40px; left: 40px;
     }
+    .ant-btn { margin-left: 40px; padding: 0 30Px; }
   }
 }
 </style>

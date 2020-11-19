@@ -21,6 +21,12 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
+        path: '/tags',
+        name: 'tags',
+        component: () => import(/* webpackChunkName: "pages" */ '../views/Tags.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
         path: '/edit',
         name: 'edit',
         component: () => import(/* webpackChunkName: "pages" */ '../views/Edit.vue'),

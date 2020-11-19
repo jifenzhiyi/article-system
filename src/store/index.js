@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     language: storage.get('scada_lang') || 'zh-CN', // 当前选中的语言
     previewIsShow: false,
+    tagAdd: false,
   },
   mutations: {
     // 设置语言
@@ -19,6 +20,10 @@ export default new Vuex.Store({
     // 预览模块显示/隐藏
     SET_PREVIEW(state, flag) {
       state.previewIsShow = flag;
+    },
+    // 标签新增状态更新
+    SET_TAG_CHANGE(state) {
+      state.tagAdd = !state.tagAdd;
     },
   },
   actions: {

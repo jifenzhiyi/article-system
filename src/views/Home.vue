@@ -1,38 +1,30 @@
 <template>
-  <div class="home">
-    <home-aside />
-    <div class="content">
-      <home-top
-        :type="type"
-        :list="list"
-        :count="total"
-        @on-change="onChange"
-        @on-search="onSearch"
-        @on-status="onStatus" />
-      <home-list
-        v-show="type === 'list'"
-        :list="list"
-        @on-del="del"
-        @on-edit="edit"
-        @on-release="release" />
-      <home-grid
-        v-show="type === 'imgs'"
-        :list="list"
-        @on-del="del"
-        @on-edit="edit"
-        @on-release="release" />
-      <home-pagination
-        :total="total"
-        :current="page"
-        :pageSize="size"
-        @on-change-number="pageChange"
-        @on-change-size="sizeChange" />
-    </div>
+  <div class="content">
+    <home-top
+      :type="type"
+      :list="list"
+      :count="total"
+      @on-change="onChange"
+      @on-search="onSearch"
+      @on-status="onStatus" />
+    <home-list
+      v-show="type === 'list'"
+      :list="list"
+      @on-options="options"/>
+    <home-grid
+      v-show="type === 'imgs'"
+      :list="list"
+      @on-options="options" />
+    <home-pagination
+      :total="total"
+      :current="page"
+      :pageSize="size"
+      @on-change-number="pageChange"
+      @on-change-size="sizeChange" />
   </div>
 </template>
 
 <script>
-import homeAside from './template/aside';
 import homeTop from './template/top';
 import homeList from './template/list';
 import homeGrid from './template/grid';
@@ -42,7 +34,6 @@ import api from './api';
 export default {
   name: 'Home',
   components: {
-    homeAside,
     homeTop,
     homeList,
     homeGrid,
@@ -69,33 +60,24 @@ export default {
     this.getList();
   },
   methods: {
-    del(articleId) {
-      this.$notice_confirm({
-        minfo: '确认删除该文章?',
-        func: async () => {
-          const res = await api.deleteArticle({ articleId });
-          if (res) {
-            const index = this.list.findIndex((o) => o.articleId === articleId);
-            this.list.splice(index, 1);
-          }
-        },
-      });
-    },
-    edit(id) {
-      this.$router.push(`/edit/${id}`);
-    },
-    async release(articleId) {
-      this.$notice_confirm({
-        minfo: '确认发布该文章?',
-        func: async () => {
-          const res = await api.publishArticle({ articleId });
-          res && this.$message.success(res.msg);
-          res && this.getList();
-        },
-      });
+    options(obj) {
+      const info = { delete: '删除', publish: '发布', unshelve: '下架' };
+      const articleId = obj.articleId;
+      if (obj.type === 'edit') {
+        this.$router.push(`/edit/${articleId}`);
+      } else {
+        this.$notice_confirm({
+          minfo: `确认${info[obj.type]}该文章?`,
+          func: async () => {
+            const res = await api.operation(obj.type, { articleId });
+            res && this.$message.success(res.msg);
+            res && this.getList();
+          },
+        });
+      }
     },
     async getList() {
-      const res = await api.list('api/articles/queryList', {
+      const res = await api.operation('queryList', {
         page: this.page,
         size: this.size,
         title: this.title,
@@ -118,12 +100,10 @@ export default {
       this.statusList = list;
       this.getList();
     },
-    // 分页跳转
     pageChange(num) {
       this.page = num;
       this.getList();
     },
-    // 一页数量更新
     sizeChange(page, size) {
       this.page = page;
       this.size = size;
@@ -134,15 +114,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.home {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  .content {
-    flex: 1;
-    padding: 50px;
-    position: relative;
-    background: #f8f8f8;
-  }
+.content {
+  flex: 1;
+  padding: 50px;
+  position: relative;
+  background: #f8f8f8;
 }
 </style>

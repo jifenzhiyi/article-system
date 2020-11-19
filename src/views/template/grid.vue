@@ -27,7 +27,7 @@
             </template>
             <a-icon
               type="delete"
-              @click="del(item.articleId)" />
+              @click="options('delete', item.articleId)" />
           </a-tooltip>
           <a-tooltip placement="top">
             <template slot="title">
@@ -35,7 +35,7 @@
             </template>
             <a-icon
               type="form"
-              @click="edit(item.articleId)" />
+              @click="options('edit', item.articleId)" />
           </a-tooltip>
           <a-tooltip placement="top">
             <template slot="title">
@@ -44,7 +44,16 @@
             <a-icon
               type="upload"
               v-show="item.status === 0"
-              @click="release(item.articleId)" />
+              @click="options('publish', item.articleId)" />
+          </a-tooltip>
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>下架</span>
+            </template>
+            <a-icon
+              type="download"
+              v-show="item.status === 1"
+              @click="options('unshelve', item.articleId)" />
           </a-tooltip>
         </div>
       </a-list-item>

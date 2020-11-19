@@ -16,6 +16,7 @@ import {
   Menu,
   Upload,
   Checkbox,
+  Tag,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -30,6 +31,7 @@ Vue.use(Input);
 Vue.use(List);
 Vue.use(Menu);
 Vue.use(Pagination);
+Vue.use(Tag);
 Vue.use(Tooltip);
 Vue.use(Upload);
 

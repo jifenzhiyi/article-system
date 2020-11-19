@@ -25,6 +25,12 @@ export default {
       this.file = file;
       this.chunks = [];
       const img = await this.handleChange('content');
+      if (img === '您的账号在异地登录，请重新登录') {
+        failure(img);
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1000);
+      }
       if (img === '该文件非图片格式' || img === '上传图片大小不能超过2M') {
         failure(img);
       }
@@ -51,6 +57,11 @@ export default {
       form.append('project', type);
       form.append('file', this.file);
       const ret = await this.$http.post('/api/images/upload', form);
+      if (ret.data && ret.data.code !== '0000') {
+        const code = ret.data.code;
+        console.log('code', code);
+        return code === '2006' ? '您的账号在异地登录，请重新登录' : null;
+      }
       if (type !== 'content') {
         this.params.mainImage = ret.data.data.imageUrl;
       }

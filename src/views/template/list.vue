@@ -21,11 +21,14 @@
         </div>
         <div class="time">更新于 {{ item.updateTime }}</div>
         <div class="btn">
-          <a @click="del(item.articleId)">删除</a>
-          <a @click="edit(item.articleId)">编辑</a>
+          <a @click="options('delete', item.articleId)">删除</a>
+          <a @click="options('edit', item.articleId)">编辑</a>
           <a
             v-if="item.status === 0"
-            @click="release(item.articleId)">发布</a>
+            @click="options('publish', item.articleId)">发布</a>
+          <a
+            v-if="item.status === 1"
+            @click="options('unshelve', item.articleId)">下架</a>
         </div>
       </a-list-item>
     </a-list>

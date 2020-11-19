@@ -6,39 +6,25 @@ const login = (url, data) => request.send(url, { method: 'POST', data });
 // 注册
 const register = (url, data) => request.send(url, { method: 'POST', data });
 
-// 列表
-const list = (url, data) => request.send(url, { method: 'POST', data });
-
-// 详情
-const info = (data) => request.send('/api/articles/queryArticle', { method: 'POST', data });
-
 // 文件检查
 const checkfile = (data) => request.send('/api/checkfile', { method: 'POST', data });
 
 // 文件上传
 const upload = (data) => request.send('/api/uploadfile', { method: 'POST', data });
 
-// 新建文章
-const createArticle = (data) => request.send('/api/articles/save', { method: 'POST', data });
+// 文章操作接口
+// queryList 列表 | queryArticle 详情 | save 新建 | update 更新 | publish 发布 | delete 删除 | unshelve 下架
+const operation = (config, data) => request.send(`/api/articles/${config}`, { method: 'POST', data });
 
-// 更新文章
-const updateArticle = (data) => request.send('/api/articles/update', { method: 'POST', data });
-
-// 发布文章
-const publishArticle = (data) => request.send('/api/articles/publish', { method: 'POST', data });
-
-// 删除文章
-const deleteArticle = (data) => request.send('/api/articles/delete', { method: 'POST', data });
+// 标签操作接口
+// addTags 新增 ｜ deleteTags 删除 ｜ queryList 查询
+const tagOperate = (config, data) => request.send(`/api/tags/${config}`, { method: 'POST', data });
 
 export default {
   login,
   register,
-  list,
-  info,
   checkfile,
   upload,
-  createArticle,
-  updateArticle,
-  publishArticle,
-  deleteArticle,
+  operation,
+  tagOperate,
 };

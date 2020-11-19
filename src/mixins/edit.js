@@ -14,14 +14,8 @@ export default {
       }
       this.$store.commit('SET_PREVIEW', true);
     },
-    del(id) {
-      this.$emit('on-del', id);
-    },
-    edit(id) {
-      this.$emit('on-edit', id);
-    },
-    release(articleId) {
-      this.$emit('on-release', articleId);
+    options(type, articleId) {
+      this.$emit('on-options', { type, articleId });
     },
   },
 };
