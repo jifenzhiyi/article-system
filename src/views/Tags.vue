@@ -4,11 +4,13 @@
     <div class="list">
       <a-tag
         closable
-        color="red"
         class="one"
         v-for="item in list"
         :key="item.tagId"
-        @close="e => close(e, item.tagId)">{{ item.tagValue }}</a-tag>
+        :color="item.isSelect ? 'red' : 'blue'"
+        @close="e => close(e, item.tagId)"
+        @dblclick="select(item)">{{ item.tagValue }}</a-tag>
+      <p>备注：双击选择是否首页显示(<span class="s1">红色</span>为新闻页展示标签，<span class="s2">蓝色</span>不展示)</p>
     </div>
   </div>
 </template>
@@ -36,9 +38,15 @@ export default {
     this.getList();
   },
   methods: {
+    select(item) {
+      item.isSelect = !item.isSelect;
+    },
     async getList() {
       const res = await api.tagOperate('queryList', { all: 1 });
-      this.list = res.data;
+      this.list = res.data.map((one) => {
+        one.isSelect = false;
+        return one;
+      });
     },
     async close(e, tagId) {
       e.preventDefault();
@@ -63,7 +71,12 @@ export default {
     .one {
       font-size: 32px;
       padding: 10px 20px;
-      margin-bottom: 20px;
+      margin-right: 30px;
+      margin-bottom: 30px;
+    }
+    p span {
+      &.s1 {color: #f5222d; }
+      &.s2 {color: #1890ff; }
     }
   }
 }

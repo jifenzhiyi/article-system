@@ -17,6 +17,8 @@ import {
   Upload,
   Checkbox,
   Tag,
+  Select,
+  Spin,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -34,6 +36,8 @@ Vue.use(Pagination);
 Vue.use(Tag);
 Vue.use(Tooltip);
 Vue.use(Upload);
+Vue.use(Select);
+Vue.use(Spin);
 
 Vue.prototype.$message = message;
 Vue.prototype.$modal = Modal;

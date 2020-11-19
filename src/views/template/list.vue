@@ -6,8 +6,8 @@
       <a-list-item
         slot="renderItem"
         slot-scope="item">
-        <img
-          class="imgcss"
+        <base-image
+          config="h_default"
           :src="item.mainImage" />
         <a-list-item-meta :description="item.briefIntro">
           <a

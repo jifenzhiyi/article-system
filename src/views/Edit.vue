@@ -28,6 +28,26 @@
           v-model="params.content"
           :init="init" />
       </div>
+      <div class="tags">
+        <a-select
+          mode="multiple"
+          style="width: 100%"
+          placeholder="添加标签"
+          :filter-option="false"
+          :value="params.tagIdList"
+          @search="getTags"
+          @change="selectChange">
+          <a-spin
+            size="small"
+            v-if="fetching"
+            slot="notFoundContent" />
+          <a-select-option
+            v-for="d in tagsArr"
+            :key="d.tagId">
+            {{ d.tagValue }}
+          </a-select-option>
+        </a-select>
+      </div>
       <div class="other">
         <h3>封面图片和导语</h3>
         <div class="temp">
@@ -44,7 +64,8 @@
               alt="fileImg"
               class="fileCss"
               v-if="params.mainImage"
-              :src="params.mainImage" />
+              :src="params.mainImage"
+              @error="imgError" />
             <div v-else>
               <a-icon :type="loading ? 'loading' : 'plus'" />
               <div class="ant-upload-text">
@@ -102,6 +123,8 @@ export default {
   },
   data() {
     return {
+      tagsArr: [],
+      fetching: false,
       loading: false,
       focusArr: {
         title: false,
@@ -115,6 +138,7 @@ export default {
         briefIntro: '', // 导语
         content: '', // 内容
         status: null, // 文章状态
+        tagIdList: [], // 添加标签
       },
       init: {
         language: 'zh_CN',
@@ -139,8 +163,12 @@ export default {
       this.params.articleId = this.$route.params.id;
       this.getInfo();
     }
+    this.getTags();
   },
   methods: {
+    imgError() {
+      this.params.mainImage = '/null.png';
+    },
     inputFocus(type) {
       this.focusArr[type] = true;
     },
@@ -150,6 +178,15 @@ export default {
     async getInfo() {
       const res = await api.operation('queryArticle', { articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
+    },
+    async getTags(tagValue) {
+      this.fetching = true;
+      const res = await api.tagOperate('queryList', { tagValue, page: 1, size: 5 });
+      res && (this.tagsArr = res.data);
+      this.fetching = false;
+    },
+    selectChange(val) {
+      this.params.tagIdList = val;
     },
     goback() {
       window.history.back(-1);
@@ -180,10 +217,10 @@ export default {
       let res = null;
       if (this.params.articleId) {
         // 编辑文章
-        res = await api.updateArticle(this.params);
+        res = await api.operation('update', this.params);
       } else {
         // 新增文章
-        res = await api.createArticle(this.params);
+        res = await api.operation('save', this.params);
         res && (this.params.articleId = res.data.articleId);
       }
       res && this.$message.success(res.msg);
@@ -231,6 +268,12 @@ export default {
       height: 1000px;
       display: flex;
       margin-bottom: 30px;
+    }
+    .tags {
+      display: flex;
+      margin: 0 50px;
+      padding: 50px 0;
+      border-top: dashed 1px #ddd;
     }
     .other {
       display: flex;

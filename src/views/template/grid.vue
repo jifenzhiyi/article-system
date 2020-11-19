@@ -7,9 +7,10 @@
         class="listItem"
         slot="renderItem"
         slot-scope="item">
-        <div
-          class="imgcss"
-          :style="`background: url(${item.mainImage}) center no-repeat;`">
+        <div class="imgcss">
+          <base-image
+            config="w100 h100"
+            :src="item.mainImage" />
         </div>
         <h4
           class="ellipsis"
@@ -79,11 +80,12 @@ export default {
   overflow-x: hidden;
   .listItem {
     .imgcss {
+      width: 100%;
       height: 200px;
       overflow: hidden;
+      text-align: center;
       margin-bottom: 10px;
       border-bottom: solid 1px #ddd;
-      background-size: 100% !important;
     }
     h4 {
       padding: 0 130px 0 20px;
