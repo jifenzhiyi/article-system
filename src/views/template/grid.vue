@@ -14,13 +14,27 @@
         </div>
         <h4
           class="ellipsis"
-          @click="preview(item.articleId)">{{ item.title }}
-          <span :class="item.status === 1 && 'now'">
-            「 {{ item.status === 1 ? '已发布' : '未发布' }} 」
-          </span>
-        </h4>
-        <p class="ellipsis">{{ item.briefIntro || '无' }}</p>
-        <p>更新于 {{ item.updateTime.split(' ')[0] }}</p>
+          @click="preview(item.articleId)">{{ item.title }}</h4>
+        <p class="ellipsis">导语：{{ item.briefIntro || '无' }}</p>
+        <p class="time">更新于 {{ item.updateTime }}</p>
+        <div class="status">
+          <span v-if="item.status === 0">「 未发布 」</span>
+          <div
+            v-if="item.status === 1 && item.top === '10'"
+            class="btn_list">
+            <a-button
+              ghost
+              type="primary"
+              @click="radioChange('1', item)">置顶</a-button>
+            <a-button
+              ghost
+              type="primary"
+              @click="radioChange('99', item)">置尾</a-button>
+          </div>
+          <span
+            class="now"
+            v-if="item.status === 1 && item.top !== '10'">「 {{ item.top === '1' ? '已置顶' : '已置尾' }} 」</span>
+        </div>
         <div class="abs popup">
           <a-tooltip placement="top">
             <template slot="title">
@@ -81,28 +95,46 @@ export default {
   .listItem {
     .imgcss {
       width: 100%;
-      height: 200px;
+      height: 250px;
       overflow: hidden;
       text-align: center;
       margin-bottom: 10px;
       border-bottom: solid 1px #ddd;
     }
     h4 {
-      padding: 0 130px 0 20px;
+      padding: 0 20px;
       font-size: 32px;
       cursor: pointer;
       position: relative;
     }
-    h4:hover { color: #f00; }
-    h4 span {
-      right: 0;
-      top: 6px;
-      color: #666;
-      font-size: 16px;
-      position: absolute;
-      &.now { color: #1DA57A; }
+    .status {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      justify-content: flex-end;
+      span {
+        color: #999;
+        padding-left: 30px;
+        &.now { color: #f02645; }
+      }
+      .btn_list {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .ant-btn { width: 150px; height: 60px; margin: 0 20px; }
+      }
     }
-    p { padding: 0 20px; margin-bottom: 10px; font-size: 28px;}
+    h4:hover { color: #f00; }
+    p {
+      font-size: 28px;
+      padding: 0 20px;
+      margin-bottom: 10px;
+      &.time {
+        color: #999;
+      }
+    }
     .popup {
       display: none;
       justify-content: flex-end;

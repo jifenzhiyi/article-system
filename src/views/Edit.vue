@@ -178,11 +178,12 @@ export default {
     async getInfo() {
       const res = await api.operation('queryArticle', { articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
+      this.params.tagIdList = res.data.tagList.map((one) => one.tagId);
     },
     async getTags(tagValue) {
       this.fetching = true;
       const res = await api.tagOperate('queryList', { tagValue, page: 1, size: 5 });
-      res && (this.tagsArr = res.data);
+      res && (this.tagsArr = res.data.rows);
       this.fetching = false;
     },
     selectChange(val) {
@@ -215,6 +216,7 @@ export default {
         return;
       }
       let res = null;
+      !this.params.briefIntro && (this.params.briefIntro = '无');
       if (this.params.articleId) {
         // 编辑文章
         res = await api.operation('update', this.params);

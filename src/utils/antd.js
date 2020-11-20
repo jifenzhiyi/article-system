@@ -19,6 +19,7 @@ import {
   Tag,
   Select,
   Spin,
+  Radio,
 } from 'ant-design-vue';
 
 Vue.use(Avatar);
@@ -38,6 +39,7 @@ Vue.use(Tooltip);
 Vue.use(Upload);
 Vue.use(Select);
 Vue.use(Spin);
+Vue.use(Radio);
 
 Vue.prototype.$message = message;
 Vue.prototype.$modal = Modal;

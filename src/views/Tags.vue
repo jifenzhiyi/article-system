@@ -38,13 +38,19 @@ export default {
     this.getList();
   },
   methods: {
-    select(item) {
+    async select(item) {
       item.isSelect = !item.isSelect;
+      const res = await api.tagOperate('updateTags', {
+        tagId: item.tagId,
+        tagShow: item.isSelect ? 1 : 0,
+      });
+      res && this.$message.success(res.msg);
+      res && this.getList();
     },
     async getList() {
       const res = await api.tagOperate('queryList', { all: 1 });
       this.list = res.data.map((one) => {
-        one.isSelect = false;
+        one.isSelect = one.tagShow === 1;
         return one;
       });
     },

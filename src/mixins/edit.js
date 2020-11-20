@@ -7,6 +7,9 @@ export default {
     };
   },
   methods: {
+    radioChange(top, item) {
+      this.$emit('on-options', { type: 'putTop', articleId: item.articleId, top });
+    },
     async preview(articleId) {
       if (articleId) {
         const res = await api.operation('queryArticle', { articleId });

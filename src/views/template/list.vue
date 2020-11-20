@@ -6,9 +6,11 @@
       <a-list-item
         slot="renderItem"
         slot-scope="item">
-        <base-image
-          config="h_default"
-          :src="item.mainImage" />
+        <div class="img_s">
+          <base-image
+            config="h_default"
+            :src="item.mainImage" />
+        </div>
         <a-list-item-meta :description="item.briefIntro">
           <a
             slot="title"
@@ -16,10 +18,27 @@
             href="javascript:void(0)"
             @click="preview(item.articleId)">{{ item.title }}</a>
         </a-list-item-meta>
-        <div :class="['status', item.status === 1 && 'now']">
-          「 {{ item.status === 1 ? '已发布' : '未发布' }} 」
+        <div class="status">
+          <span v-if="item.status === 0">未发布</span>
+          <div
+            v-if="item.status === 1 && item.top === '10'"
+            class="btn_list">
+            <a-button
+              ghost
+              type="primary"
+              @click="radioChange('1', item)">置顶</a-button>
+            <a-button
+              ghost
+              type="primary"
+              @click="radioChange('99', item)">置尾</a-button>
+          </div>
+          <span
+            class="now"
+            v-if="item.status === 1 && item.top !== '10'">
+            {{ item.top === '1' ? '已置顶' : '已置尾' }}
+          </span>
         </div>
-        <div class="time">更新于 {{ item.updateTime }}</div>
+        <div class="time">更新于{{ item.updateTime }}</div>
         <div class="btn">
           <a @click="options('delete', item.articleId)">删除</a>
           <a @click="options('edit', item.articleId)">编辑</a>
@@ -55,9 +74,13 @@ export default {
   border: solid 1px #ddd;
   top: 150px; left: 50px; right: 50px; bottom: 150px;
   .ant-list-item {
-    .imgcss {
-      width: 300px;
-      padding-right: 50px;
+    min-height: 200px;
+    .img_s {
+      width: 400px;
+      overflow: hidden;
+      margin-right: 30px;
+      text-align: center;
+      border: solid 1px #ddd;
     }
     .title { font-size: 32px; }
     .title:hover { color: #f00; }
@@ -77,9 +100,21 @@ export default {
       font-size: 30px;
       font-weight: bold;
       text-align: center;
-      &.now { color: #1DA57A; }
+      span.now {
+        color: #f02645;
+      }
+      .btn_list {
+        display: flex;
+        height: 200px;
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-around;
+        .ant-btn {
+          width: 150px;
+        }
+      }
     }
-    .time { padding-left: 50px; width: 420px; }
+    .time { padding-left: 10px; width: 400px; overflow: hidden; white-space: nowrap; }
     .btn {
       width: 320px;
       display: flex;

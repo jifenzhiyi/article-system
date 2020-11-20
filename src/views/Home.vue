@@ -60,11 +60,15 @@ export default {
     this.getList();
   },
   methods: {
-    options(obj) {
+    async options(obj) {
       const info = { delete: '删除', publish: '发布', unshelve: '下架' };
       const articleId = obj.articleId;
       if (obj.type === 'edit') {
         this.$router.push(`/edit/${articleId}`);
+      } else if (obj.type === 'putTop') {
+        const res = await api.operation(obj.type, { articleId, top: obj.top });
+        res && this.$notice_success({ minfo: obj.top === '1' ? '置顶成功' : '置尾成功' });
+        this.getList();
       } else {
         this.$notice_confirm({
           minfo: `确认${info[obj.type]}该文章?`,
@@ -84,7 +88,10 @@ export default {
         statusList: this.statusList,
       });
       if (res) {
-        this.list = res.data.rows;
+        this.list = res.data.rows.map((one) => {
+          one.top = one.top.toString();
+          return one;
+        });
         this.total = res.data.total;
       }
     },

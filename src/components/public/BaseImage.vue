@@ -21,7 +21,6 @@ export default {
 
 <style lang="less" scoped>
 img {
-  margin-right: 30px;
   &.w100 {
     width: 100%;
   }
