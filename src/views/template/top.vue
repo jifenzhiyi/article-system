@@ -7,7 +7,7 @@
         class="menu"
         v-show="isShow">
         <a-menu-item
-          v-for="(item, index) in options"
+          v-for="(item, index) in optionsArr"
           :key="index">
           <a-checkbox
             :checked="item.isSelect"
@@ -32,16 +32,33 @@
       </a-tooltip>
     </div>
     <div class="search">
+      <a-select
+        allowClear
+        style="width: 150px"
+        placeholder="根据标签搜索"
+        :filter-option="false"
+        @change="selectChange">
+        <a-select-option
+          v-for="d in tagsArr"
+          :key="d.tagId"
+          :value="d.tagId">
+          {{ d.tagValue }}
+        </a-select-option>
+      </a-select>
+    </div>
+    <div class="search">
       <a-input-search
         v-model="text"
-        placeholder="根据文章标题搜索"
-        style="width: 200px"
+        placeholder="根据标题搜索"
+        style="width: 150px"
         @search="onSearch" />
     </div>
   </div>
 </template>
 
 <script>
+import api from '@/views/api';
+
 export default {
   name: 'HomeTop',
   props: ['type', 'count', 'list'],
@@ -53,25 +70,38 @@ export default {
         if (this.statusList.length === 1) {
           this.statusList[0] === 0 ? this.title = '未发布' : this.title = '已发布';
           this.statusList[0] === 0
-            ? this.options[1].isSelect = false
-            : this.options[0].isSelect = false;
+            ? this.optionsArr[1].isSelect = false
+            : this.optionsArr[0].isSelect = false;
         }
       },
     },
   },
   data() {
     return {
+      tagsArr: [],
+      tagId: '',
       isShow: false,
       text: '',
       title: '全部',
-      options: [
+      optionsArr: [
         { value: 0, label: '未发布', isSelect: true },
         { value: 1, label: '已发布', isSelect: true },
       ],
       statusList: this.$storage.get(`${window.configName}_status`) || [0, 1],
     };
   },
+  created() {
+    this.getTags();
+  },
   methods: {
+    selectChange(val) {
+      this.tagId = val;
+      this.$emit('on-search', { type: 'tagIdList', val: val ? [val] : [] });
+    },
+    async getTags() {
+      const res = await api.tagOperate('queryList', { tagShow: 1, page: 1, size: 5 });
+      res && (this.tagsArr = res.data.rows);
+    },
     menuShow() {
       this.isShow = !this.isShow;
     },
@@ -90,7 +120,7 @@ export default {
       this.$emit('on-change', type);
     },
     onSearch() {
-      this.$emit('on-search', this.text);
+      this.$emit('on-search', { type: 'title', val: this.text });
     },
   },
 };
@@ -135,6 +165,10 @@ export default {
       top: 70px; right: 0;
       border: solid 1px #ccc;
     }
+  }
+  .search {
+    display: flex;
+    margin-left: 20px;
   }
 }
 </style>

@@ -47,6 +47,7 @@ export default {
       list: [], // 列表数据
       total: 0, // 文章总数
       title: '', // 标题搜索
+      tagIdList: [], // 文章的分类id列表搜索
       statusList: this.$storage.get(`${window.configName}_status`) || [0, 1],
       type: this.$storage.get(`${window.configName}_type`) || 'list', // imgs 图文模式，list 列表模式
     };
@@ -86,6 +87,7 @@ export default {
         size: this.size,
         title: this.title,
         statusList: this.statusList,
+        tagIdList: this.tagIdList,
       });
       if (res) {
         this.list = res.data.rows.map((one) => {
@@ -99,8 +101,9 @@ export default {
       this.type = type;
       this.$storage.set(`${window.configName}_type`, type);
     },
-    onSearch(val) {
-      this.title = val;
+    onSearch(obj) {
+      obj.type === 'title' && (this.title = obj.val);
+      obj.type === 'tagIdList' && (this.tagIdList = obj.val);
       this.getList();
     },
     onStatus(list) {
