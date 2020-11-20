@@ -107,6 +107,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import editor from '@tinymce/tinymce-vue';
 import upload from '@/mixins/upload';
 import edit from '@/mixins/edit';
@@ -122,6 +123,7 @@ export default {
     },
   },
   data() {
+    this.getTags = debounce(this.getTags, 800);
     return {
       tagsArr: [],
       fetching: false,
