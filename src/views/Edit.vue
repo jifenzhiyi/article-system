@@ -164,8 +164,9 @@ export default {
     if (id) {
       this.params.articleId = this.$route.params.id;
       this.getInfo();
+    } else {
+      this.getTags();
     }
-    this.getTags();
   },
   methods: {
     imgError() {
@@ -181,6 +182,7 @@ export default {
       const res = await api.operation('queryArticle', { articleId: this.params.articleId });
       this.params = Object.assign(this.params, res.data);
       this.params.tagIdList = res.data.tagList.map((one) => one.tagId);
+      this.getTagsNew(this.params.tagIdList);
     },
     async getTags(tagValue) {
       this.fetching = true;
@@ -188,7 +190,14 @@ export default {
       res && (this.tagsArr = res.data.rows);
       this.fetching = false;
     },
+    async getTagsNew(tagIdList) {
+      this.fetching = true;
+      const res = await api.tagOperate('queryList', { tagIdList });
+      res && (this.tagsArr = res.data.rows);
+      this.fetching = false;
+    },
     selectChange(val) {
+      console.log('selectChange val', val);
       this.params.tagIdList = val;
     },
     goback() {
