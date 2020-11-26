@@ -197,7 +197,6 @@ export default {
       this.fetching = false;
     },
     selectChange(val) {
-      console.log('selectChange val', val);
       this.params.tagIdList = val;
     },
     goback() {
