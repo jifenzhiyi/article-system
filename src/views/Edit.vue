@@ -217,6 +217,10 @@ export default {
         this.$message.error('请输入标题');
         return;
       }
+      if (!this.params.author) {
+        this.$message.error('请输入作者');
+        return;
+      }
       if (!this.params.content) {
         this.$message.error('请输入内容');
         return;
